@@ -1,0 +1,5 @@
+npm install --save react-router-dom
+npm install --save semantic-ui-react
+npm install --save semantic-ui-css
+npm install --save auth0-js
+npm install --save jwt-decode
