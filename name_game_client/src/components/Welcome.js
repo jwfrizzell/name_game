@@ -69,7 +69,7 @@ export default class Welcome extends Component {
 				`${BASE_URL}faces/isvalid`,
 				JSON.stringify(body)
 			);
-			console.log(body);
+
 			this.setState({ correct: request.data.isValid });
 		}
 	};
@@ -119,7 +119,7 @@ export default class Welcome extends Component {
 			color = "green";
 		}
 
-		return <Icon inverted circular name={name} color={color} />;
+		return <Icon size="big" inverted circular name={name} color={color} />;
 	}
 
 	render() {
@@ -137,13 +137,11 @@ export default class Welcome extends Component {
 						<Icon
 							size="big"
 							name="arrow circle left"
-							color="green"
+							color="blue"
 						/>
 					</a>
 					<Card style={styles.card}>
-						<Card.Content style={styles.cardHeader}>
-							{this.outputResult()}
-						</Card.Content>
+						<Card.Content style={styles.cardHeader} />
 						<Card.Content>
 							<Form.Group widths={16}>
 								<Image
@@ -190,9 +188,12 @@ export default class Welcome extends Component {
 							size="big"
 							style={styles.navigation}
 							name="arrow circle right"
-							color="green"
+							color="blue"
 						/>
 					</a>
+				</Form.Group>
+				<Form.Group style={styles.iconNotification}>
+					{this.outputResult()}
 				</Form.Group>
 			</Form>
 		);

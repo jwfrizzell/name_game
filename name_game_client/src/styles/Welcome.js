@@ -2,6 +2,7 @@ const styles = {
 	form: {},
 	formGroup: {
 		marginTop: "15px",
+		marginBottom: "0px",
 		marginLeft: "30%"
 	},
 	dropdown: {
@@ -25,6 +26,9 @@ const styles = {
 		textAlign: "center",
 		background: "grey",
 		height: "50px"
+	},
+	iconNotification: {
+		marginLeft: "46%"
 	}
 };
 
