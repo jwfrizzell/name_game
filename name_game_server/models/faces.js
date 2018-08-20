@@ -34,17 +34,19 @@ exports.getFaces = async function(data) {
 	//indexArray
 	for (var i = 0; i < indexArray.length; i++) {
 		var data = request.data[indexArray[i]];
-		listImages.push({
-			id: data["id"],
-			imageID: data["headshot"]["id"],
-			imageURL: data["headshot"]["url"]
-		});
+		if (data != undefined) {
+			listImages.push({
+				id: data["id"],
+				imageID: data["headshot"]["id"],
+				imageURL: data["headshot"]["url"]
+			});
 
-		listNames[indexArrayReordered[i] - 1] = {
-			id: data["id"],
-			firstName: data["firstName"],
-			lastName: data["lastName"]
-		};
+			listNames[indexArrayReordered[i] - 1] = {
+				id: data["id"],
+				firstName: data["firstName"],
+				lastName: data["lastName"]
+			};
+		}
 	}
 	return { names: listNames, images: listImages };
 };

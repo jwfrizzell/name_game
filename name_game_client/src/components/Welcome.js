@@ -1,5 +1,13 @@
 import React, { Component } from "react";
-import { Form, Image, Card, Dropdown, Button, Icon } from "semantic-ui-react";
+import {
+	Form,
+	Image,
+	Card,
+	Dropdown,
+	Button,
+	Icon,
+	Pagination
+} from "semantic-ui-react";
 import axios from "axios";
 
 import { isLoggedIn } from "utils/AuthService";
@@ -15,42 +23,49 @@ export default class Welcome extends Component {
 		currentImage: {},
 		isLoading: false,
 		correct: "",
-		selectionSize: 6
+		selectionSize: 6,
+		correctAnswers: 0,
+		incorrectAnswers: 0
 	};
 
-	async componentDidMount() {
+	componentDidMount() {
 		if (!isLoggedIn()) {
 			this.props.history.push("/login");
 		} else {
-			try {
-				this.setState({ isLoading: true });
-				const request = await axios.post(
-					`${BASE_URL}faces`,
-					JSON.stringify({ size: "6" })
-				);
-				const { data } = request.data;
+			this.loadNamesAndFaces(this.state.selectionSize);
+		}
+	}
 
-				this.setState({
-					imageCollections: data.images.map(
-						({ imageID, imageURL }, index) => ({
-							key: parseFloat(index),
-							id: imageID,
-							url: `http:${imageURL}`
-						})
-					),
-					names: data.names.map(({ id, firstName, lastName }) => ({
-						value: id,
-						text: firstName + " " + lastName
-					})),
-					currentImage: {
-						id: data.images[0].imageID,
-						url: `http:${data.images[0].imageURL}`
-					},
-					isLoading: false
-				});
-			} catch (err) {
-				this.setState({ loading: false });
-			}
+	async loadNamesAndFaces(size) {
+		try {
+			this.setState({ isLoading: true });
+			const request = await axios.post(
+				`${BASE_URL}faces`,
+				JSON.stringify({ size: size })
+			);
+			const { data } = request.data;
+			console.log(data);
+			this.setState({
+				imageCollections: data.images.map(
+					({ imageID, imageURL }, index) => ({
+						key: parseFloat(index),
+						id: imageID,
+						url: `http:${imageURL}`
+					})
+				),
+				names: data.names.map(({ id, firstName, lastName }) => ({
+					value: id,
+					text: firstName + " " + lastName
+				})),
+				currentImage: {
+					key: 0,
+					id: data.images[0].imageID,
+					url: `http:${data.images[0].imageURL}`
+				},
+				isLoading: false
+			});
+		} catch (err) {
+			this.setState({ isLoading: false });
 		}
 	}
 
@@ -79,13 +94,14 @@ export default class Welcome extends Component {
 		const currentSelection = imageCollections.filter(i => {
 			return i.id === current.id;
 		});
-		let newKey = 0;
 
+		let newKey = 0;
 		if (direction === "left") {
 			newKey = currentSelection[0].key - 1;
 			if (currentSelection[0].key !== 0) {
 				this.setState({
 					currentImage: {
+						key: newKey,
 						id: imageCollections[newKey].id,
 						url: imageCollections[newKey].url
 					}
@@ -96,6 +112,7 @@ export default class Welcome extends Component {
 			if (currentSelection[0].key + 1 < imageCollections.length) {
 				this.setState({
 					currentImage: {
+						key: newKey,
 						id: imageCollections[newKey].id,
 						url: imageCollections[newKey].url
 					}
@@ -122,24 +139,41 @@ export default class Welcome extends Component {
 		return <Icon size="big" inverted circular name={name} color={color} />;
 	}
 
+	handlePaginationChange = (e, { activePage }) => {
+		this.setState({
+			selectionSize: activePage,
+			nameKey: "",
+			correct: ""
+		});
+		this.loadNamesAndFaces(activePage);
+	};
+
 	render() {
-		const { currentImage, names, nameKey, isLoading } = this.state;
+		const {
+			currentImage,
+			names,
+			nameKey,
+			isLoading,
+			imageCollections
+		} = this.state;
 
 		return (
 			<Form loading={isLoading}>
 				<Form.Group style={styles.formGroup}>
-					<a
+					<Button
+						disabled={currentImage.key === 0}
 						style={styles.navigation}
 						onClick={() =>
 							this.onClickChangeImage("left", currentImage)
 						}
-					>
-						<Icon
-							size="big"
-							name="arrow circle left"
-							color="blue"
-						/>
-					</a>
+						icon={
+							<Icon
+								color={currentImage.key === 0 ? "grey" : "blue"}
+								size="large"
+								name="arrow circle left"
+							/>
+						}
+					/>
 					<Card style={styles.card}>
 						<Card.Content style={styles.cardHeader} />
 						<Card.Content>
@@ -175,22 +209,39 @@ export default class Welcome extends Component {
 									primary
 								/>
 							</Form.Group>
-							<Form.Group />
+							<Form.Group>
+								<Pagination
+									size="mini"
+									defaultActivePage={6}
+									onPageChange={this.handlePaginationChange}
+									totalPages={15}
+									firstItem={null}
+									lastItem={null}
+								/>
+							</Form.Group>
 						</Card.Content>
 					</Card>
-					<a
+					<Button
+						disabled={
+							currentImage.key === imageCollections.length - 1
+						}
 						style={styles.navigation}
 						onClick={() =>
 							this.onClickChangeImage("right", currentImage)
 						}
-					>
-						<Icon
-							size="big"
-							style={styles.navigation}
-							name="arrow circle right"
-							color="blue"
-						/>
-					</a>
+						icon={
+							<Icon
+								size="large"
+								name="arrow circle right"
+								color={
+									currentImage.key ===
+									imageCollections.length - 1
+										? "grey"
+										: "blue"
+								}
+							/>
+						}
+					/>
 				</Form.Group>
 				<Form.Group style={styles.iconNotification}>
 					{this.outputResult()}

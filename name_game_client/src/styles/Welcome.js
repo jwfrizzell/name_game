@@ -1,7 +1,7 @@
 const styles = {
 	form: {},
 	formGroup: {
-		marginTop: "15px",
+		marginTop: "10px",
 		marginBottom: "0px",
 		marginLeft: "30%"
 	},
@@ -12,10 +12,13 @@ const styles = {
 		marginLeft: "5px"
 	},
 	card: {
-		width: "350px"
+		width: "345px"
 	},
 	navigation: {
-		marginTop: "20%"
+		width: "45px",
+		height: "40px",
+		background: "white",
+		marginTop: "25%"
 	},
 	image: {
 		marginLeft: "17px",
@@ -25,10 +28,10 @@ const styles = {
 	cardHeader: {
 		textAlign: "center",
 		background: "grey",
-		height: "50px"
+		height: "40px"
 	},
 	iconNotification: {
-		marginLeft: "46%"
+		marginLeft: "48%"
 	}
 };
 
