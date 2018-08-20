@@ -1,9 +1,9 @@
 const axios = require("axios");
 
-function generateRandomNumbers(max) {
+function generateRandomNumbers(maxRange, listSize) {
 	var arr = [];
-	while (arr.length < 6) {
-		var randomnumber = Math.floor(Math.random() * max) + 1;
+	while (arr.length < listSize) {
+		var randomnumber = Math.floor(Math.random() * maxRange) + 1;
 		if (arr.indexOf(randomnumber) > -1) continue;
 		arr[arr.length] = randomnumber;
 	}
@@ -15,25 +15,38 @@ async function getFaceData() {
 	return await axios.get(url);
 }
 
-exports.getFaces = async function() {
+exports.getFaces = async function(data) {
 	const request = await getFaceData();
 
-	const indexArray = generateRandomNumbers(request.data.length);
-	var list = [];
+	let size = parseFloat(data.size);
+	if (size > request.data.length) {
+		size = request.data.length;
+	}
 
+	//Random selection from complete list of names.
+	const indexArray = generateRandomNumbers(request.data.length, size);
+
+	//Random order for setting the index of the list of names.
+	const indexArrayReordered = generateRandomNumbers(size, size);
+	var listImages = [];
+	var listNames = new Array(size);
 	//Get profiles at the random position returned from
 	//indexArray
 	for (var i = 0; i < indexArray.length; i++) {
 		var data = request.data[indexArray[i]];
-		list.push({
+		listImages.push({
 			id: data["id"],
-			firstName: data["firstName"],
-			lastName: data["lastName"],
 			imageID: data["headshot"]["id"],
 			imageURL: data["headshot"]["url"]
 		});
+
+		listNames[indexArrayReordered[i] - 1] = {
+			id: data["id"],
+			firstName: data["firstName"],
+			lastName: data["lastName"]
+		};
 	}
-	return list;
+	return { names: listNames, images: listImages };
 };
 
 exports.validateFace = async function(data) {

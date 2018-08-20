@@ -14,7 +14,8 @@ export default class Welcome extends Component {
 		nameKey: "",
 		currentImage: {},
 		isLoading: false,
-		correct: ""
+		correct: "",
+		selectionSize: 6
 	};
 
 	async componentDidMount() {
@@ -23,24 +24,27 @@ export default class Welcome extends Component {
 		} else {
 			try {
 				this.setState({ isLoading: true });
-				const request = await axios.get(`${BASE_URL}faces`);
+				const request = await axios.post(
+					`${BASE_URL}faces`,
+					JSON.stringify({ size: "6" })
+				);
 				const { data } = request.data;
 
 				this.setState({
-					imageCollections: data.map(
+					imageCollections: data.images.map(
 						({ imageID, imageURL }, index) => ({
 							key: parseFloat(index),
 							id: imageID,
 							url: `http:${imageURL}`
 						})
 					),
-					names: data.map(({ id, firstName, lastName }) => ({
+					names: data.names.map(({ id, firstName, lastName }) => ({
 						value: id,
 						text: firstName + " " + lastName
 					})),
 					currentImage: {
-						id: data[0].imageID,
-						url: `http:${data[0].imageURL}`
+						id: data.images[0].imageID,
+						url: `http:${data.images[0].imageURL}`
 					},
 					isLoading: false
 				});
@@ -65,7 +69,7 @@ export default class Welcome extends Component {
 				`${BASE_URL}faces/isvalid`,
 				JSON.stringify(body)
 			);
-
+			console.log(body);
 			this.setState({ correct: request.data.isValid });
 		}
 	};
