@@ -3,3 +3,6 @@ npm install --save semantic-ui-react
 npm install --save semantic-ui-css
 npm install --save auth0-js
 npm install --save jwt-decode
+npm install --save enzyme
+npm install --save enzyme-adapter-react-16
+npm install --save-dev jsonwebtoken

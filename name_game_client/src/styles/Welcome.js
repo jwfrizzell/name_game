@@ -28,7 +28,7 @@ const styles = {
 	cardHeader: {
 		textAlign: "center",
 		background: "grey",
-		height: "40px"
+		height: "50px"
 	},
 	iconNotification: {
 		marginLeft: "48%"

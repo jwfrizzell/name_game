@@ -6,7 +6,8 @@ import {
 	Dropdown,
 	Button,
 	Icon,
-	Pagination
+	Pagination,
+	Label
 } from "semantic-ui-react";
 import axios from "axios";
 
@@ -28,24 +29,27 @@ export default class Welcome extends Component {
 		incorrectAnswers: 0
 	};
 
-	componentDidMount() {
+	async componentDidMount() {
 		if (!isLoggedIn()) {
 			this.props.history.push("/login");
 		} else {
-			this.loadNamesAndFaces(this.state.selectionSize);
+			await this.loadNamesAndFaces(this.state.selectionSize);
 		}
 	}
 
 	async loadNamesAndFaces(size) {
 		try {
 			this.setState({ isLoading: true });
+
 			const request = await axios.post(
 				`${BASE_URL}faces`,
 				JSON.stringify({ size: size })
 			);
 			const { data } = request.data;
-			console.log(data);
+
 			this.setState({
+				incorrectAnswers: 0,
+				correctAnswers: 0,
 				imageCollections: data.images.map(
 					({ imageID, imageURL }, index) => ({
 						key: parseFloat(index),
@@ -85,7 +89,18 @@ export default class Welcome extends Component {
 				JSON.stringify(body)
 			);
 
-			this.setState({ correct: request.data.isValid });
+			this.setState({
+				correct: request.data.isValid,
+				correctAnswers:
+					request.data.isValid === true
+						? this.state.correctAnswers + 1
+						: this.state.correctAnswers,
+				incorrectAnswers:
+					request.data.isValid === false
+						? this.state.incorrectAnswers + 1
+						: this.state.incorrectAnswers,
+				nameKey: ""
+			});
 		}
 	};
 
@@ -154,7 +169,9 @@ export default class Welcome extends Component {
 			names,
 			nameKey,
 			isLoading,
-			imageCollections
+			imageCollections,
+			correctAnswers,
+			incorrectAnswers
 		} = this.state;
 
 		return (
@@ -175,10 +192,20 @@ export default class Welcome extends Component {
 						}
 					/>
 					<Card style={styles.card}>
-						<Card.Content style={styles.cardHeader} />
+						<Card.Content style={styles.cardHeader}>
+							<Label id="id-correct-answer">
+								<Icon color="green" name="check" />{" "}
+								{correctAnswers}
+							</Label>
+							<Label>
+								<Icon color="red" name="x" />
+								{incorrectAnswers}
+							</Label>
+						</Card.Content>
 						<Card.Content>
 							<Form.Group widths={16}>
 								<Image
+									id="id-profile-image"
 									style={styles.image}
 									src={currentImage.url}
 								/>
@@ -187,6 +214,7 @@ export default class Welcome extends Component {
 						<Card.Content>
 							<Form.Group>
 								<Dropdown
+									id="id-name-dropdown"
 									style={styles.dropdown}
 									placeholder="Select Name"
 									search
@@ -197,6 +225,7 @@ export default class Welcome extends Component {
 									onChange={this.onChangeSetName}
 								/>
 								<Button
+									id="id-name-button-comparison"
 									style={styles.validatButton}
 									content="Validate"
 									onClick={() => {
