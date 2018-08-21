@@ -22,7 +22,6 @@ exports.getFaces = async function(data) {
 	if (size > request.data.length) {
 		size = request.data.length;
 	}
-
 	//Random selection from complete list of names.
 	const indexArray = generateRandomNumbers(request.data.length, size);
 

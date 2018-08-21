@@ -1,0 +1,69 @@
+What I wanted more than anything for the API was simplicity. So I decided to create as few routes as possible. 
+
+POST /faces
+BODY {size: '6'}
+In the /faces post I split up the data between the names and the headshot info. I associated each name with the id and I also associated each headshot with the id to make for an easier comparison. I also decided to randomize the order on the backend instead of handling this on the frontend. I first generated a random group of numbers from 0 to the max number of headshots. I took this random group of numbers and created the images list. I then took the size property sent through the request and generated a random group of numbers to assign an index to for the names. This randomized the name list that would be returned to the caller. 
+
+RESP BODY Example:
+{
+    "data": {
+        "names": [
+            {
+                "id": "5WVQlJ4ebeS2OuMMw0Qu0O",
+                "firstName": "James",
+                "lastName": "Sun"
+            },
+            {
+                "id": "5is2VWvwg8CikSkeoosmu6",
+                "firstName": "Tesceline",
+                "lastName": "Tabilas"
+            },
+            {
+                "id": "2JO6Ky4MVaQqEYQos42MKk",
+                "firstName": "Matthew",
+                "lastName": "Wolfe"
+            }
+        ],
+        "images": [
+            {
+                "id": "2JO6Ky4MVaQqEYQos42MKk",
+                "imageID": "4FD6akhoHY4WmmUC4IgSg6",
+                "imageURL": "//images.ctfassets.net/3cttzl4i3k1h/4FD6akhoHY4WmmUC4IgSg6/ecea6faa7ab6e2da40cb575a702e5ba5/headshot_matt_wolfe.jpg"
+            },
+            {
+                "id": "5WVQlJ4ebeS2OuMMw0Qu0O",
+                "imageID": "6DqXJSDpYI6O6Aicy2quoU",
+                "imageURL": "//images.ctfassets.net/3cttzl4i3k1h/6DqXJSDpYI6O6Aicy2quoU/6a8eea58968b7defacfb223299fe544e/headshot_james_sun.jpg"
+            },
+            {
+                "id": "5is2VWvwg8CikSkeoosmu6",
+                "imageID": "6SaAMdVVEQsIMumMAWQ04S",
+                "imageURL": "//images.ctfassets.net/3cttzl4i3k1h/6SaAMdVVEQsIMumMAWQ04S/e0efe956903d3eb891470ba79d4804d0/headshot_tesceline_tabilas.jpg"
+            }
+        ]
+    }
+}
+
+
+
+
+POST /faces/isvalid
+BODY {"id": "14tyvyMcHuKOOsIGEWyyAG","imageID": "11cZoae2yaW24IqoWWSCue"}
+The request to validate the id with the headshot id was done by taking the id the user passed in the request and getting the headshot id from the original data. Once I had retrieved the original headshot id I compared it to what the user send in their request for the imageID property. If the user was correct I would return true and if the user was incorrect I would return false. 
+
+
+RESP BODY Example: 
+{
+    "isValid": true
+}
+
+
+
+
+
+
+
+
+
+
+

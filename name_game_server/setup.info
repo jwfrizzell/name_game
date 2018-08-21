@@ -1,3 +1,7 @@
 npm install --save axios
 npm install --save cors
 npm install --save nodemon
+npm install --save chai
+npm install --save chai-http
+npm install --global mocha
+npm install --save-dev mocha
